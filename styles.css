@@ -1122,6 +1122,72 @@ footer {
     text-align: center;
 }
 
+/* Navigation Controls */
+.nav-controls {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.nav-lessons-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    width: auto;
+    padding: 8px 15px;
+    border-radius: var(--border-radius);
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--primary-color);
+    text-decoration: none;
+    background-color: var(--background-light);
+    transition: all var(--transition-speed);
+}
+
+.nav-lessons-btn:hover {
+    background-color: var(--primary-light);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-light);
+}
+
+.nav-lessons-btn:hover::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: var(--text-dark);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    white-space: nowrap;
+    z-index: 10;
+    opacity: 0;
+    animation: fadeIn 0.3s forwards;
+}
+
+.nav-lessons-btn:hover::before {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 5px;
+    border-style: solid;
+    border-color: transparent transparent var(--text-dark) transparent;
+    z-index: 10;
+    opacity: 0;
+    animation: fadeIn 0.3s forwards;
+}
+
+.nav-lessons-btn i {
+    margin-right: 5px;
+}
+
+/* Theme Toggle */
 .theme-toggle button {
     width: 40px;
     height: 40px;
@@ -1231,6 +1297,16 @@ body.dark-theme .tab-btn {
 
 body.dark-theme .tab-btn.active {
     color: var(--primary-light);
+}
+
+body.dark-theme .nav-lessons-btn {
+    background-color: #373b4d;
+    color: #e0e0e0;
+}
+
+body.dark-theme .nav-lessons-btn:hover {
+    background-color: var(--primary-color);
+    color: white;
 }
 
 /* Gamification Section */
@@ -2250,4 +2326,61 @@ body.dark-theme .lesson-modal-footer {
 
 body.dark-theme .lesson-modal-footer {
     background-color: #373b4d;
+}
+
+/* Lesson Manager Button Section */
+.lesson-manager-section {
+    background-color: white;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-light);
+    padding: 20px;
+    margin-top: 20px;
+    text-align: center;
+}
+
+.lesson-manager-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    background-color: var(--primary-color);
+    color: white;
+    padding: 15px 20px;
+    border-radius: var(--border-radius);
+    font-weight: 600;
+    font-size: 1.1rem;
+    text-decoration: none;
+    margin: 0 auto;
+    box-shadow: var(--shadow-light);
+    transition: all 0.3s ease;
+    max-width: 250px;
+}
+
+.lesson-manager-button:hover {
+    background-color: var(--primary-dark);
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-medium);
+}
+
+.lesson-manager-button i {
+    font-size: 1.4rem;
+}
+
+.lesson-manager-description {
+    margin-top: 15px;
+    color: var(--text-light);
+    font-size: 0.9rem;
+}
+
+/* Dark theme support */
+body.dark-theme .lesson-manager-section {
+    background-color: #2a2d3e;
+}
+
+body.dark-theme .lesson-manager-button {
+    background-color: var(--primary-color);
+}
+
+body.dark-theme .lesson-manager-button:hover {
+    background-color: var(--primary-dark);
 } 

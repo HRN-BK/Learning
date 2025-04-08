@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson Content Management - Daily Journal & Learning Companion</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="lesson-content.css">
+</head>
+<body>
+    <div class="app-container">
+        <header>
+            <div class="header-content">
+                <div class="back-button">
+                    <button id="back-to-main" class="btn icon-btn">
+                        <i class="fas fa-arrow-left"></i> Back
+                    </button>
+                </div>
+                <div class="app-title">
+                    <h1>Lesson Content Management</h1>
+                    <div class="theme-toggle">
+                        <button id="theme-toggle-btn" class="btn icon-btn">
+                            <i class="fas fa-moon"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="lesson-page-layout">
+                <!-- Sidebar with subjects -->
+                <div class="lesson-sidebar">
+                    <div class="search-container">
+                        <input type="text" id="search-lessons" placeholder="Search lessons...">
+                        <i class="fas fa-search search-icon"></i>
+                    </div>
+                    
+                    <div class="subjects-nav">
+                        <h2>Subjects</h2>
+                        <button id="add-subject-btn" class="btn primary-btn">
+                            <i class="fas fa-plus"></i> Add Subject
+                        </button>
+                        <div id="subjects-list" class="subjects-list">
+                            <!-- Subjects will be populated here by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Main content area -->
+                <div class="lesson-content-area">
+                    <div class="lessons-header">
+                        <div class="view-controls">
+                            <button class="view-btn active" data-view="card-view">
+                                <i class="fas fa-th-large"></i>
+                            </button>
+                            <button class="view-btn" data-view="list-view">
+                                <i class="fas fa-list"></i>
+                            </button>
+                        </div>
+                        <button id="add-lesson-btn" class="btn primary-btn">
+                            <i class="fas fa-plus"></i> Add Lesson
+                        </button>
+                    </div>
+                    
+                    <div class="lessons-display card-view" id="lessons-display">
+                        <!-- Lessons will be populated here by JavaScript -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Filter Panel -->
+            <div class="filter-panel">
+                <h3>Filter Options</h3>
+                <div class="filter-group">
+                    <label for="filter-subject">Subject:</label>
+                    <select id="filter-subject">
+                        <option value="">All Subjects</option>
+                        <!-- Options will be populated by JavaScript -->
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="filter-date">Date Range:</label>
+                    <div class="date-range">
+                        <input type="date" id="filter-start-date">
+                        <span>to</span>
+                        <input type="date" id="filter-end-date">
+                    </div>
+                </div>
+                <div class="filter-group">
+                    <label for="filter-tags">Tags:</label>
+                    <input type="text" id="filter-tags" placeholder="e.g., important, review">
+                </div>
+                <button id="apply-filters" class="btn primary-btn">Apply Filters</button>
+                <button id="reset-filters" class="btn secondary-btn">Reset</button>
+            </div>
+        </main>
+
+        <!-- Add/Edit Subject Modal -->
+        <div id="subject-modal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 id="subject-modal-title">Add New Subject</h2>
+                    <button class="close-modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <input type="text" id="subject-name" placeholder="Subject name..." required>
+                    <textarea id="subject-description" placeholder="Subject description..."></textarea>
+                    <div class="color-picker">
+                        <label>Subject Color:</label>
+                        <div class="color-options">
+                            <div class="color-option" data-color="#4a6bdf" style="background-color: #4a6bdf;"></div>
+                            <div class="color-option" data-color="#ff7e5f" style="background-color: #ff7e5f;"></div>
+                            <div class="color-option" data-color="#65d6ad" style="background-color: #65d6ad;"></div>
+                            <div class="color-option" data-color="#9c59b6" style="background-color: #9c59b6;"></div>
+                            <div class="color-option" data-color="#f39c12" style="background-color: #f39c12;"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button id="save-subject" class="btn primary-btn">Save Subject</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add/Edit Lesson Modal -->
+        <div id="lesson-modal" class="modal">
+            <div class="modal-content large-modal">
+                <div class="modal-header">
+                    <h2 id="lesson-modal-title">Add New Lesson</h2>
+                    <button class="close-modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="lesson-form">
+                        <div class="form-row">
+                            <input type="text" id="lesson-title" placeholder="Lesson title..." required>
+                        </div>
+                        <div class="form-row">
+                            <select id="lesson-subject">
+                                <option value="">Select Subject</option>
+                                <!-- Options will be populated by JavaScript -->
+                            </select>
+                        </div>
+                        <div class="form-row editor-container">
+                            <div class="editor-toolbar">
+                                <button class="toolbar-btn" data-action="bold"><i class="fas fa-bold"></i></button>
+                                <button class="toolbar-btn" data-action="italic"><i class="fas fa-italic"></i></button>
+                                <button class="toolbar-btn" data-action="underline"><i class="fas fa-underline"></i></button>
+                                <button class="toolbar-btn" data-action="heading"><i class="fas fa-heading"></i></button>
+                                <button class="toolbar-btn" data-action="list-ul"><i class="fas fa-list-ul"></i></button>
+                                <button class="toolbar-btn" data-action="list-ol"><i class="fas fa-list-ol"></i></button>
+                                <button class="toolbar-btn" data-action="link"><i class="fas fa-link"></i></button>
+                                <button class="toolbar-btn" data-action="image"><i class="fas fa-image"></i></button>
+                                <button class="toolbar-btn" data-action="code"><i class="fas fa-code"></i></button>
+                            </div>
+                            <textarea id="lesson-content" placeholder="Lesson content..."></textarea>
+                        </div>
+                        <div class="form-row">
+                            <div class="file-uploads">
+                                <label>Attachments:</label>
+                                <div class="upload-container">
+                                    <label for="lesson-attachments" class="upload-btn">
+                                        <i class="fas fa-paperclip"></i> Add Files
+                                    </label>
+                                    <input type="file" id="lesson-attachments" multiple style="display: none;">
+                                </div>
+                                <div id="attachment-list" class="attachment-list">
+                                    <!-- Attachments will be listed here -->
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="tags-input-container">
+                                <label>Tags:</label>
+                                <input type="text" id="lesson-tags" placeholder="Add tags (comma separated)...">
+                            </div>
+                            <div id="tags-display" class="tags-display">
+                                <!-- Tags will appear here -->
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="lesson-important">
+                                <label for="lesson-important">Mark as important</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button id="save-lesson" class="btn primary-btn">Save Lesson</button>
+                    <button id="export-lesson" class="btn secondary-btn">Export</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- View Lesson Modal -->
+        <div id="view-lesson-modal" class="modal">
+            <div class="modal-content large-modal">
+                <div class="modal-header">
+                    <h2 id="view-lesson-title">Lesson Title</h2>
+                    <div id="view-lesson-subject" class="view-lesson-subject"></div>
+                    <button class="close-modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="lesson-meta">
+                        <span id="view-lesson-date" class="lesson-date"></span>
+                        <div id="view-lesson-tags" class="tags-display"></div>
+                    </div>
+                    <div id="view-lesson-content" class="lesson-content-display"></div>
+                    <div id="view-lesson-attachments" class="attachment-list"></div>
+                </div>
+                <div class="modal-footer">
+                    <button id="edit-viewed-lesson" class="btn primary-btn"><i class="fas fa-edit"></i> Edit</button>
+                    <button id="delete-viewed-lesson" class="btn secondary-btn"><i class="fas fa-trash"></i> Delete</button>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>Daily Journal & Learning Companion © 2023</p>
+        </footer>
+    </div>
+
+    <script src="lesson-content.js"></script>
+</body>
+</html> 
