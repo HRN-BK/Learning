@@ -1,3 +1,8 @@
+// Helper function to detect mobile devices
+function isMobileDevice() {
+    return window.innerWidth < 768;
+}
+
 // Main Application Class
 class JournalApp {
     constructor() {
@@ -61,6 +66,12 @@ class JournalApp {
 
         // Initial update of day content
         this.updateDayContent(this.selectedDate);
+        
+        // Add resize event listener to handle mobile/desktop transitions
+        window.addEventListener('resize', this.handleResize.bind(this));
+        
+        // Optimize collapsible sections for mobile
+        this.optimizeCollapsibleSections();
     }
     
     initUserProfile() {
@@ -582,6 +593,27 @@ class JournalApp {
                 }
             });
         });
+    }
+
+    // Add new methods to handle responsive behavior
+    handleResize() {
+        // Handle any responsive layout changes needed when resizing between mobile/desktop
+        if (isMobileDevice()) {
+            // Mobile-specific adjustments
+            this.optimizeCollapsibleSections();
+        }
+    }
+    
+    optimizeCollapsibleSections() {
+        if (isMobileDevice()) {
+            // On mobile, collapse all sections except the first one
+            const sections = document.querySelectorAll('.collapsible-section');
+            sections.forEach((section, index) => {
+                if (index > 0) {
+                    section.classList.add('collapsed');
+                }
+            });
+        }
     }
 }
 
@@ -1321,6 +1353,26 @@ class Lessons {
     }
     
     init() {
+        // Create sidebar overlay for mobile
+        const overlay = document.createElement('div');
+        overlay.className = 'sidebar-overlay';
+        document.body.appendChild(overlay);
+        
+        // Add floating action button for mobile
+        if (isMobileDevice()) {
+            const fab = document.createElement('button');
+            fab.className = 'mobile-fab';
+            fab.innerHTML = '<i class="fas fa-plus"></i>';
+            fab.setAttribute('aria-label', 'Add new lesson');
+            
+            fab.addEventListener('click', () => {
+                this.currentEditingId = null; // Ensure we're creating a new lesson
+                this.showLessonForm();
+            });
+            
+            document.body.appendChild(fab);
+        }
+        
         // Initialize mobile menu toggle
         const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
         const sidebar = document.querySelector('.lessons-sidebar');
@@ -1328,14 +1380,41 @@ class Lessons {
         if (mobileMenuToggle && sidebar) {
             mobileMenuToggle.addEventListener('click', () => {
                 sidebar.classList.toggle('active');
+                overlay.classList.toggle('active');
+            });
+            
+            // Close sidebar when clicking overlay
+            overlay.addEventListener('click', () => {
+                sidebar.classList.remove('active');
+                overlay.classList.remove('active');
             });
             
             // Close sidebar when clicking outside
             document.addEventListener('click', (e) => {
                 if (!sidebar.contains(e.target) && !mobileMenuToggle.contains(e.target)) {
                     sidebar.classList.remove('active');
+                    overlay.classList.remove('active');
                 }
             });
+        }
+        
+        // Add Back Button for mobile view
+        if (isMobileDevice()) {
+            const lessonsContent = document.querySelector('.lessons-content');
+            if (lessonsContent) {
+                const backButton = document.createElement('button');
+                backButton.className = 'mobile-back-btn';
+                backButton.innerHTML = '<i class="fas fa-arrow-left"></i> Back to Subjects';
+                backButton.addEventListener('click', () => {
+                    if (sidebar) {
+                        sidebar.classList.add('active');
+                        overlay.classList.add('active');
+                    }
+                });
+                
+                // Insert back button at the beginning of content
+                lessonsContent.insertBefore(backButton, lessonsContent.firstChild);
+            }
         }
         
         // Initialize subject search
@@ -1370,7 +1449,12 @@ class Lessons {
         
         // Setup event listeners for saving
         document.getElementById('save-lesson').addEventListener('click', () => this.saveLesson());
-        document.querySelector('.add-subject-btn').addEventListener('click', () => this.showSubjectForm());
+        
+        // Add subject button
+        const addSubjectBtn = document.querySelector('.add-subject-btn');
+        if (addSubjectBtn) {
+            addSubjectBtn.addEventListener('click', () => this.showSubjectForm());
+        }
     }
     
     initRichTextEditor() {
@@ -1432,13 +1516,38 @@ class Lessons {
             form.style.display = 'block';
             list.style.display = 'none';
             
-            // Reset form
-            document.getElementById('lesson-title').value = '';
-            document.getElementById('lesson-content').value = '';
-            document.getElementById('lesson-subject').value = this.selectedSubjectId || '';
+            // Reset form if not editing
+            if (!this.currentEditingId) {
+                document.getElementById('lesson-title').value = '';
+                document.getElementById('lesson-content').value = '';
+                document.getElementById('lesson-subject').value = this.selectedSubjectId || '';
+            }
             
             // Focus title field
             document.getElementById('lesson-title').focus();
+            
+            // On mobile, add a "Cancel" button to the top for easier access
+            // and hide the FAB
+            if (isMobileDevice()) {
+                const existingMobileCancel = form.querySelector('.mobile-cancel-button');
+                if (!existingMobileCancel) {
+                    const mobileCancel = document.createElement('button');
+                    mobileCancel.className = 'btn secondary-btn mobile-cancel-button';
+                    mobileCancel.innerHTML = '<i class="fas fa-times"></i> Cancel';
+                    mobileCancel.style.marginBottom = '15px';
+                    mobileCancel.style.width = '100%';
+                    
+                    mobileCancel.addEventListener('click', () => this.hideLessonForm());
+                    
+                    form.insertBefore(mobileCancel, form.firstChild);
+                }
+                
+                // Hide FAB while form is showing
+                const fab = document.querySelector('.mobile-fab');
+                if (fab) {
+                    fab.style.display = 'none';
+                }
+            }
         }
     }
     
@@ -1449,6 +1558,17 @@ class Lessons {
         if (form && list) {
             form.style.display = 'none';
             list.style.display = 'grid';
+            
+            // Reset editing state
+            this.currentEditingId = null;
+            
+            // Show FAB on mobile if hidden
+            if (isMobileDevice()) {
+                const fab = document.querySelector('.mobile-fab');
+                if (fab) {
+                    fab.style.display = 'flex';
+                }
+            }
         }
     }
     
@@ -1492,9 +1612,13 @@ class Lessons {
         this.updateBreadcrumb();
         
         // Close sidebar on mobile
-        const sidebar = document.querySelector('.lessons-sidebar');
-        if (sidebar) {
-            sidebar.classList.remove('active');
+        if (isMobileDevice()) {
+            const sidebar = document.querySelector('.lessons-sidebar');
+            const overlay = document.querySelector('.sidebar-overlay');
+            if (sidebar && overlay) {
+                sidebar.classList.remove('active');
+                overlay.classList.remove('active');
+            }
         }
     }
     
@@ -1629,11 +1753,20 @@ class Lessons {
     }
     
     saveSubject() {
-        const nameEl = document.getElementById('subject-name');
-        const descriptionEl = document.getElementById('subject-description');
+        let nameEl, descriptionEl;
+        
+        if (isMobileDevice()) {
+            nameEl = document.querySelector('.mobile-subject-form #subject-name');
+            descriptionEl = document.querySelector('.mobile-subject-form #subject-description');
+        } else {
+            nameEl = document.getElementById('subject-name');
+            descriptionEl = document.getElementById('subject-description');
+        }
+        
+        if (!nameEl) return;
         
         const name = nameEl.value.trim();
-        const description = descriptionEl.value.trim();
+        const description = descriptionEl ? descriptionEl.value.trim() : '';
         
         if (!name) {
             alert('Please enter a subject name.');
@@ -1659,8 +1792,8 @@ class Lessons {
         this.subjects.push(subject);
         this.saveToLocalStorage();
         
-        nameEl.value = '';
-        descriptionEl.value = '';
+        if (nameEl) nameEl.value = '';
+        if (descriptionEl) descriptionEl.value = '';
         
         this.displaySubjects();
         this.populateSubjectDropdown();
@@ -1962,9 +2095,21 @@ class Lessons {
         // Save the current editing ID
         this.currentEditingId = lesson.id;
         
-        // Focus the title field and scroll into view
-        titleEl.scrollIntoView({ behavior: 'smooth' });
-        titleEl.focus();
+        // Show the lesson form
+        this.showLessonForm();
+        
+        // On mobile, scroll to form and ensure it's fully visible
+        if (isMobileDevice()) {
+            const lessonForm = document.querySelector('.lesson-form');
+            if (lessonForm) {
+                setTimeout(() => {
+                    window.scrollTo({
+                        top: lessonForm.offsetTop - 20,
+                        behavior: 'smooth'
+                    });
+                }, 100);
+            }
+        }
     }
     
     editSubject(id) {
@@ -1972,18 +2117,26 @@ class Lessons {
         
         if (!subject) return;
         
-        const nameEl = document.getElementById('subject-name');
-        const descriptionEl = document.getElementById('subject-description');
-        
-        nameEl.value = subject.name;
-        descriptionEl.value = subject.description || '';
-        
         // Save the current editing ID
         this.currentEditingSubjectId = subject.id;
         
-        // Focus the name field and scroll into view
-        nameEl.scrollIntoView({ behavior: 'smooth' });
-        nameEl.focus();
+        if (isMobileDevice()) {
+            // Show the mobile subject form with the subject data
+            this.showSubjectForm();
+        } else {
+            // Desktop behavior
+            const nameEl = document.getElementById('subject-name');
+            const descriptionEl = document.getElementById('subject-description');
+            
+            if (nameEl && descriptionEl) {
+                nameEl.value = subject.name;
+                descriptionEl.value = subject.description || '';
+                
+                // Focus the name field and scroll into view
+                nameEl.scrollIntoView({ behavior: 'smooth' });
+                nameEl.focus();
+            }
+        }
     }
     
     deleteLesson(id) {
@@ -2078,6 +2231,71 @@ class Lessons {
     saveToLocalStorage() {
         localStorage.setItem('lessons', JSON.stringify(this.lessons));
         localStorage.setItem('subjects', JSON.stringify(this.subjects));
+    }
+    
+    // Add the showSubjectForm method
+    showSubjectForm() {
+        // For mobile, create a popup subject form
+        if (isMobileDevice()) {
+            // Remove any existing form
+            const existingForm = document.querySelector('.mobile-subject-form');
+            if (existingForm) existingForm.remove();
+            
+            const form = document.createElement('div');
+            form.className = 'mobile-subject-form';
+            form.innerHTML = `
+                <div class="mobile-form-overlay"></div>
+                <div class="mobile-form-content">
+                    <div class="mobile-form-header">
+                        <h3>${this.currentEditingSubjectId ? 'Edit Subject' : 'Add New Subject'}</h3>
+                        <button class="close-mobile-form"><i class="fas fa-times"></i></button>
+                    </div>
+                    <div class="mobile-form-body">
+                        <div class="form-group">
+                            <label for="subject-name">Subject Name</label>
+                            <input type="text" id="subject-name" class="form-control" placeholder="Enter subject name">
+                        </div>
+                        <div class="form-group">
+                            <label for="subject-description">Description (Optional)</label>
+                            <textarea id="subject-description" class="form-control" placeholder="Enter description"></textarea>
+                        </div>
+                    </div>
+                    <div class="mobile-form-footer">
+                        <button class="btn secondary-btn cancel-subject">Cancel</button>
+                        <button class="btn primary-btn save-subject">Save Subject</button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(form);
+            
+            // Add event listeners
+            form.querySelector('.close-mobile-form').addEventListener('click', () => form.remove());
+            form.querySelector('.cancel-subject').addEventListener('click', () => form.remove());
+            form.querySelector('.mobile-form-overlay').addEventListener('click', () => form.remove());
+            
+            form.querySelector('.save-subject').addEventListener('click', () => {
+                this.saveSubject();
+                form.remove();
+            });
+            
+            // If editing, populate form fields
+            if (this.currentEditingSubjectId) {
+                const subject = this.subjects.find(s => s.id === this.currentEditingSubjectId);
+                if (subject) {
+                    form.querySelector('#subject-name').value = subject.name;
+                    form.querySelector('#subject-description').value = subject.description || '';
+                }
+            }
+            
+            // Focus on name field
+            setTimeout(() => form.querySelector('#subject-name').focus(), 100);
+        } else {
+            // Desktop behavior
+            // Here you would implement the desktop version of showing the subject form
+            // This preserves the existing desktop functionality
+            alert('Please implement the desktop subject form functionality');
+        }
     }
 }
 

@@ -954,19 +954,199 @@ footer {
 @media (max-width: 768px) {
     .app-layout {
         grid-template-columns: 1fr;
+        gap: 15px;
+    }
+    
+    .left-panel {
+        position: static;
+        max-height: none;
+    }
+    
+    .header-content {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .app-title h1 {
+        font-size: 1.5rem;
+    }
+    
+    .btn, 
+    .section-icon-btn,
+    .toggle-section,
+    .add-subject-btn,
+    .edit-lesson,
+    .delete-lesson {
+        min-height: 44px;
+        min-width: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    input, select, textarea {
+        font-size: 16px;
+        padding: 12px;
+    }
+    
+    .lessons-container {
+        flex-direction: column;
+    }
+    
+    .mobile-menu-toggle {
+        display: block;
+        position: fixed;
+        top: 15px;
+        left: 15px;
+        z-index: 1010;
+        width: 44px;
+        height: 44px;
+    }
+    
+    .lessons-sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        width: 85%;
+        max-width: 300px;
+        z-index: 1000;
+        transform: translateX(-100%);
+        background-color: white;
+        box-shadow: 2px 0 10px rgba(0,0,0,0.2);
+        transition: transform 0.3s ease;
+    }
+    
+    .lessons-sidebar.active {
+        transform: translateX(0);
+    }
+    
+    .sidebar-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0,0,0,0.5);
+        z-index: 999;
+    }
+    
+    .sidebar-overlay.active {
+        display: block;
+    }
+    
+    .lessons-list {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+    
+    .lesson-header {
+        position: sticky;
+        top: 0;
+        background-color: white;
+        z-index: 10;
+        padding: 15px 0;
+        margin-bottom: 15px;
+    }
+    
+    .lesson-actions,
+    .form-actions,
+    .task-item-actions {
+        gap: 12px;
+    }
+    
+    .lesson-form .form-group {
+        margin-bottom: 20px;
+    }
+    
+    .rich-text-toolbar {
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+    
+    .rich-text-toolbar button {
+        padding: 10px;
+        font-size: 1.2rem;
+    }
+    
+    .calendar-grid {
+        gap: 2px;
     }
     
     .calendar-day {
+        height: 40px;
         padding: 2px;
     }
     
     .day-number {
-        font-size: 0.8rem;
+        font-size: 0.9rem;
     }
     
     .day-indicators {
         display: none;
     }
+    
+    .section-icons {
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+    
+    .section-icon-btn {
+        width: 44px;
+        height: 44px;
+    }
+    
+    .mobile-back-btn {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--primary-color);
+        background: none;
+        border: none;
+        padding: 10px 0;
+        cursor: pointer;
+        font-weight: 500;
+        font-size: 1rem;
+    }
+    
+    .mobile-back-btn i {
+        font-size: 1.2rem;
+    }
+    
+    footer {
+        padding: 15px;
+        margin-top: 20px;
+    }
+    
+    .schedule-view {
+        height: 350px;
+    }
+    
+    @media (max-width: 375px) {
+        .app-title h1 {
+            font-size: 1.2rem;
+        }
+        
+        .section-icon-btn {
+            width: 40px;
+            height: 40px;
+            font-size: 1rem;
+        }
+        
+        .section-header h2 {
+            font-size: 1.2rem;
+        }
+    }
+}
+
+/* Dark theme adjustments for mobile */
+body.dark-theme .lessons-sidebar {
+    background-color: #2a2d3e;
+}
+
+body.dark-theme .lesson-header {
+    background-color: #2a2d3e;
 }
 
 /* Animations */
@@ -2701,4 +2881,144 @@ body.dark-theme .lesson-manager-button:hover {
     .lessons-list {
         grid-template-columns: 1fr;
     }
+}
+
+/* Mobile subject form */
+.mobile-subject-form {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1050;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.mobile-form-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.mobile-form-content {
+    position: relative;
+    width: 90%;
+    max-width: 500px;
+    background-color: white;
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    z-index: 1051;
+    animation: slideUpMobile 0.3s forwards;
+}
+
+.mobile-form-header {
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--background-dark);
+}
+
+.mobile-form-header h3 {
+    margin: 0;
+    font-size: 1.2rem;
+}
+
+.close-mobile-form {
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    color: var(--text-light);
+    padding: 5px;
+    cursor: pointer;
+}
+
+.mobile-form-body {
+    padding: 20px;
+}
+
+.mobile-form-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding: 15px 20px;
+    background-color: var(--background-light);
+    border-top: 1px solid var(--background-dark);
+}
+
+@keyframes slideUpMobile {
+    from {
+        transform: translateY(50px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Dark theme styles for mobile form */
+body.dark-theme .mobile-form-content {
+    background-color: #2a2d3e;
+    color: #e0e0e0;
+}
+
+body.dark-theme .mobile-form-header,
+body.dark-theme .mobile-form-footer {
+    border-color: #3a3d4e;
+}
+
+body.dark-theme .mobile-form-footer {
+    background-color: #373b4d;
+}
+
+/* Mobile Floating Action Button */
+.mobile-fab {
+    display: none;
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+    z-index: 100;
+    font-size: 24px;
+    transition: all 0.2s ease;
+}
+
+.mobile-fab:hover, .mobile-fab:active {
+    background-color: var(--primary-dark);
+    transform: scale(1.05);
+}
+
+@media (max-width: 768px) {
+    /* ... existing media query styles ... */
+    
+    .mobile-fab {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    /* More specific styles for small screens */
+    @media (max-width: 375px) {
+        .mobile-fab {
+            bottom: 20px;
+            right: 20px;
+        }
+    }
+}
+
+/* Dark theme support */
+body.dark-theme .mobile-fab {
+    background-color: var(--primary-color);
 } 
