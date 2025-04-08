@@ -1317,47 +1317,262 @@ class Lessons {
         this.subjects = JSON.parse(localStorage.getItem('subjects')) || [];
         this.currentEditingId = null;
         this.currentEditingSubjectId = null;
+        this.selectedSubjectId = null;
     }
     
     init() {
-        // Initialize lesson tabs
-        const tabButtons = document.querySelectorAll('.lesson-tab-btn');
-        tabButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                // Remove active class from all tabs
-                tabButtons.forEach(b => b.classList.remove('active'));
-                
-                // Add active class to clicked tab
-                button.classList.add('active');
-                
-                // Hide all tab content
-                document.querySelectorAll('.lesson-tab-content').forEach(content => {
-                    content.classList.remove('active');
-                });
-                
-                // Show selected tab content
-                const tabId = button.dataset.tab;
-                document.getElementById(tabId).classList.add('active');
-                
-                // If the subject management tab is selected, refresh subjects list
-                if (tabId === 'subject-management') {
-                    this.displaySubjects();
-                } else if (tabId === 'lessons-by-subject') {
-                    this.displaySubjectSelector();
+        // Initialize mobile menu toggle
+        const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
+        const sidebar = document.querySelector('.lessons-sidebar');
+        
+        if (mobileMenuToggle && sidebar) {
+            mobileMenuToggle.addEventListener('click', () => {
+                sidebar.classList.toggle('active');
+            });
+            
+            // Close sidebar when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!sidebar.contains(e.target) && !mobileMenuToggle.contains(e.target)) {
+                    sidebar.classList.remove('active');
                 }
             });
-        });
+        }
         
-        // Event listener for save lesson
-        document.getElementById('save-lesson').addEventListener('click', () => this.saveLesson());
+        // Initialize subject search
+        const subjectSearch = document.getElementById('subject-search');
+        if (subjectSearch) {
+            subjectSearch.addEventListener('input', (e) => {
+                this.filterSubjects(e.target.value);
+            });
+        }
         
-        // Event listener for save subject
-        document.getElementById('save-subject').addEventListener('click', () => this.saveSubject());
+        // Initialize new lesson button
+        const newLessonBtn = document.getElementById('new-lesson-btn');
+        if (newLessonBtn) {
+            newLessonBtn.addEventListener('click', () => this.showLessonForm());
+        }
+        
+        // Initialize cancel button
+        const cancelBtn = document.getElementById('cancel-lesson');
+        if (cancelBtn) {
+            cancelBtn.addEventListener('click', () => this.hideLessonForm());
+        }
+        
+        // Initialize rich text editor
+        this.initRichTextEditor();
+        
+        // Initialize file upload
+        this.initFileUpload();
         
         // Initial displays
-        this.populateSubjectDropdown();
-        this.displayLessons();
         this.displaySubjects();
+        this.displayLessons();
+        
+        // Setup event listeners for saving
+        document.getElementById('save-lesson').addEventListener('click', () => this.saveLesson());
+        document.querySelector('.add-subject-btn').addEventListener('click', () => this.showSubjectForm());
+    }
+    
+    initRichTextEditor() {
+        const toolbar = document.querySelector('.rich-text-toolbar');
+        const editor = document.getElementById('lesson-content');
+        
+        if (toolbar && editor) {
+            toolbar.querySelectorAll('button').forEach(button => {
+                button.addEventListener('click', () => {
+                    const command = button.title.toLowerCase();
+                    document.execCommand(command, false, null);
+                });
+            });
+        }
+    }
+    
+    initFileUpload() {
+        const fileInput = document.getElementById('lesson-attachment');
+        const attachmentsList = document.getElementById('attachments-list');
+        
+        if (fileInput && attachmentsList) {
+            fileInput.addEventListener('change', (e) => {
+                const files = Array.from(e.target.files);
+                files.forEach(file => {
+                    const attachment = document.createElement('div');
+                    attachment.className = 'attachment-item';
+                    attachment.innerHTML = `
+                        <i class="fas fa-file"></i>
+                        <span>${file.name}</span>
+                        <button class="remove-attachment"><i class="fas fa-times"></i></button>
+                    `;
+                    
+                    attachment.querySelector('.remove-attachment').addEventListener('click', () => {
+                        attachment.remove();
+                    });
+                    
+                    attachmentsList.appendChild(attachment);
+                });
+            });
+        }
+    }
+    
+    filterSubjects(searchTerm) {
+        const subjectsList = document.getElementById('subjects-list');
+        if (!subjectsList) return;
+        
+        const filteredSubjects = this.subjects.filter(subject => 
+            subject.name.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+        
+        this.displaySubjectsList(filteredSubjects);
+    }
+    
+    showLessonForm() {
+        const form = document.querySelector('.lesson-form');
+        const list = document.querySelector('.lessons-list');
+        
+        if (form && list) {
+            form.style.display = 'block';
+            list.style.display = 'none';
+            
+            // Reset form
+            document.getElementById('lesson-title').value = '';
+            document.getElementById('lesson-content').value = '';
+            document.getElementById('lesson-subject').value = this.selectedSubjectId || '';
+            
+            // Focus title field
+            document.getElementById('lesson-title').focus();
+        }
+    }
+    
+    hideLessonForm() {
+        const form = document.querySelector('.lesson-form');
+        const list = document.querySelector('.lessons-list');
+        
+        if (form && list) {
+            form.style.display = 'none';
+            list.style.display = 'grid';
+        }
+    }
+    
+    displaySubjects() {
+        const subjectsList = document.getElementById('subjects-list');
+        if (!subjectsList) return;
+        
+        this.displaySubjectsList(this.subjects);
+    }
+    
+    displaySubjectsList(subjects) {
+        const subjectsList = document.getElementById('subjects-list');
+        if (!subjectsList) return;
+        
+        subjectsList.innerHTML = '';
+        
+        if (subjects.length === 0) {
+            subjectsList.innerHTML = '<p class="no-subjects">No subjects yet. Add one to get started!</p>';
+            return;
+        }
+        
+        subjects.forEach(subject => {
+            const subjectItem = document.createElement('div');
+            subjectItem.className = `subject-item ${subject.id === this.selectedSubjectId ? 'active' : ''}`;
+            subjectItem.innerHTML = `
+                <div class="subject-item-title">${subject.name}</div>
+                ${subject.description ? `<div class="subject-item-description">${subject.description}</div>` : ''}
+                <div class="subject-item-count">${this.getLessonCount(subject.id)} lessons</div>
+            `;
+            
+            subjectItem.addEventListener('click', () => this.selectSubject(subject.id));
+            
+            subjectsList.appendChild(subjectItem);
+        });
+    }
+    
+    selectSubject(subjectId) {
+        this.selectedSubjectId = subjectId;
+        this.displaySubjects();
+        this.displayLessons();
+        this.updateBreadcrumb();
+        
+        // Close sidebar on mobile
+        const sidebar = document.querySelector('.lessons-sidebar');
+        if (sidebar) {
+            sidebar.classList.remove('active');
+        }
+    }
+    
+    updateBreadcrumb() {
+        const breadcrumb = document.querySelector('.breadcrumb-nav');
+        if (!breadcrumb) return;
+        
+        const subject = this.subjects.find(s => s.id === this.selectedSubjectId);
+        
+        breadcrumb.innerHTML = `
+            <span class="breadcrumb-item" onclick="window.app.lessons.selectSubject(null)">All Subjects</span>
+            <i class="fas fa-chevron-right"></i>
+            <span class="breadcrumb-item active">${subject ? subject.name : 'All Lessons'}</span>
+        `;
+    }
+    
+    getLessonCount(subjectId) {
+        return this.lessons.filter(lesson => lesson.subjectId === subjectId).length;
+    }
+    
+    displayLessons() {
+        const lessonsList = document.getElementById('lessons-list');
+        if (!lessonsList) return;
+        
+        // Filter lessons by selected subject
+        const filteredLessons = this.selectedSubjectId
+            ? this.lessons.filter(lesson => lesson.subjectId === this.selectedSubjectId)
+            : this.lessons;
+        
+        // Sort by date (newest first)
+        filteredLessons.sort((a, b) => new Date(b.date) - new Date(a.date));
+        
+        if (filteredLessons.length === 0) {
+            lessonsList.innerHTML = `
+                <div class="no-lessons">
+                    <i class="fas fa-book"></i>
+                    <p>No lessons yet. Create your first lesson to get started!</p>
+                </div>
+            `;
+            return;
+        }
+        
+        lessonsList.innerHTML = '';
+        
+        filteredLessons.forEach(lesson => {
+            const lessonCard = document.createElement('div');
+            lessonCard.className = 'lesson-card';
+            
+            const subject = this.subjects.find(s => s.id === lesson.subjectId);
+            
+            lessonCard.innerHTML = `
+                <div class="lesson-card-header">
+                    <h3>${lesson.title}</h3>
+                    ${subject ? `<span class="lesson-subject">${subject.name}</span>` : ''}
+                </div>
+                <div class="lesson-card-content">${this.truncateContent(lesson.content)}</div>
+                <div class="lesson-card-footer">
+                    <div class="lesson-date">${new Date(lesson.date).toLocaleDateString()}</div>
+                    <div class="lesson-actions">
+                        <button class="edit-lesson" data-id="${lesson.id}"><i class="fas fa-edit"></i></button>
+                        <button class="delete-lesson" data-id="${lesson.id}"><i class="fas fa-trash"></i></button>
+                    </div>
+                </div>
+            `;
+            
+            // Add event listeners
+            lessonCard.querySelector('.edit-lesson').addEventListener('click', (e) => {
+                const id = e.target.closest('.edit-lesson').dataset.id;
+                this.editLesson(id);
+            });
+            
+            lessonCard.querySelector('.delete-lesson').addEventListener('click', (e) => {
+                const id = e.target.closest('.delete-lesson').dataset.id;
+                this.deleteLesson(id);
+            });
+            
+            lessonsList.appendChild(lessonCard);
+        });
     }
     
     saveLesson() {
@@ -1449,88 +1664,6 @@ class Lessons {
         
         this.displaySubjects();
         this.populateSubjectDropdown();
-    }
-    
-    displayLessons() {
-        const lessonsList = document.getElementById('lessons-list');
-        if (!lessonsList) return;
-        
-        lessonsList.innerHTML = '';
-        
-        // Sort lessons by date (newest first)
-        const sortedLessons = [...this.lessons].sort((a, b) => 
-            new Date(b.date) - new Date(a.date)
-        );
-        
-        if (sortedLessons.length === 0) {
-            lessonsList.innerHTML = '<p>No lessons yet. Add one above!</p>';
-            return;
-        }
-        
-        // Display all lessons
-        sortedLessons.forEach(lesson => {
-            const lessonItem = document.createElement('div');
-            lessonItem.className = 'lesson-item fade-in';
-            
-            const date = new Date(lesson.date);
-            const dateStr = date.toLocaleDateString();
-            
-            // Get subject name if available
-            let subjectHtml = '';
-            if (lesson.subjectId) {
-                const subject = this.subjects.find(s => s.id === lesson.subjectId);
-                if (subject) {
-                    subjectHtml = `<div class="lesson-subject">${subject.name}</div>`;
-                }
-            }
-            
-            lessonItem.innerHTML = `
-                <div class="lesson-title">${lesson.title}</div>
-                ${subjectHtml}
-                <div class="lesson-date">${dateStr}</div>
-                <div class="lesson-content">${this.truncateContent(lesson.content)}</div>
-                <div class="lesson-actions">
-                    <button class="edit-lesson" data-id="${lesson.id}"><i class="fas fa-edit"></i></button>
-                    <button class="delete-lesson" data-id="${lesson.id}"><i class="fas fa-trash"></i></button>
-                    <button class="add-to-sr" data-id="${lesson.id}"><i class="fas fa-sync-alt"></i></button>
-                </div>
-            `;
-            
-            lessonsList.appendChild(lessonItem);
-        });
-        
-        // Add event listeners
-        document.querySelectorAll('#lessons-list .edit-lesson').forEach(button => {
-            button.addEventListener('click', (e) => {
-                const id = e.target.closest('.edit-lesson').dataset.id;
-                this.editLesson(id);
-            });
-        });
-        
-        document.querySelectorAll('#lessons-list .delete-lesson').forEach(button => {
-            button.addEventListener('click', (e) => {
-                const id = e.target.closest('.delete-lesson').dataset.id;
-                this.deleteLesson(id);
-            });
-        });
-        
-        document.querySelectorAll('#lessons-list .add-to-sr').forEach(button => {
-            button.addEventListener('click', (e) => {
-                const id = e.target.closest('.add-to-sr').dataset.id;
-                const lesson = this.getLessonById(id);
-                if (lesson && window.app && window.app.spacedRepetition) {
-                    window.app.spacedRepetition.addLesson(lesson);
-                    
-                    // Show feedback
-                    button.innerHTML = '<i class="fas fa-check"></i>';
-                    button.style.color = 'green';
-                    setTimeout(() => {
-                        button.innerHTML = '<i class="fas fa-sync-alt"></i>';
-                        button.style.color = '';
-                    }, 1500);
-                }
-            });
-        });
     }
     
     displaySubjects() {

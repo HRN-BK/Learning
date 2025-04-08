@@ -235,54 +235,108 @@
 
                     <section class="lessons-section collapsible-section">
                         <div class="section-header">
-                            <h2>Lesson Content</h2>
-                            <button class="toggle-section"><i class="fas fa-chevron-up"></i></button>
+                            <h2><i class="fas fa-book"></i> Lessons</h2>
+                            <button class="toggle-btn"><i class="fas fa-chevron-down"></i></button>
                         </div>
                         <div class="section-content">
-                            <div class="lesson-tabs">
-                                <button class="lesson-tab-btn active" data-tab="lesson-input">Create Lesson</button>
-                                <button class="lesson-tab-btn" data-tab="subject-management">Manage Subjects</button>
-                                <button class="lesson-tab-btn" data-tab="lessons-by-subject">Lessons by Subject</button>
-                            </div>
-                            
-                            <div class="lesson-tab-content active" id="lesson-input">
-                                <div class="lesson-input">
-                                    <div class="lesson-input-header">
-                                        <input type="text" id="lesson-title" placeholder="Lesson title...">
-                                        <select id="lesson-subject">
-                                            <option value="">Select Subject (Optional)</option>
-                                            <!-- Subject options will be populated by JavaScript -->
-                                        </select>
+                            <div class="lessons-container">
+                                <!-- Mobile Menu Toggle -->
+                                <button class="mobile-menu-toggle">
+                                    <i class="fas fa-bars"></i>
+                                </button>
+
+                                <!-- Left Sidebar -->
+                                <div class="lessons-sidebar">
+                                    <div class="sidebar-header">
+                                        <h3>Subjects</h3>
+                                        <button class="add-subject-btn" title="Add New Subject">
+                                            <i class="fas fa-plus"></i>
+                                        </button>
                                     </div>
-                                    <textarea id="lesson-content" placeholder="Lesson content..."></textarea>
-                                    <div class="lesson-controls">
-                                        <button id="save-lesson" class="btn primary-btn">Save Lesson</button>
+                                    
+                                    <div class="subject-search">
+                                        <input type="text" placeholder="Search subjects..." id="subject-search">
+                                        <i class="fas fa-search"></i>
+                                    </div>
+
+                                    <div class="subjects-list" id="subjects-list">
+                                        <!-- Subjects will be populated here -->
                                     </div>
                                 </div>
-                                <div class="lessons-list-header">Recent Lessons</div>
-                                <div id="lessons-list" class="lessons-list"></div>
-                            </div>
-                            
-                            <div class="lesson-tab-content" id="subject-management">
-                                <div class="subject-form">
-                                    <input type="text" id="subject-name" placeholder="New subject name...">
-                                    <textarea id="subject-description" placeholder="Subject description (optional)..."></textarea>
-                                    <button id="save-subject" class="btn primary-btn">Add Subject</button>
-                                </div>
-                                <div class="subjects-list-header">Your Subjects</div>
-                                <div id="subjects-list" class="subjects-list"></div>
-                            </div>
-                            
-                            <div class="lesson-tab-content" id="lessons-by-subject">
-                                <div class="by-subject-header">
-                                    <h3>All Lessons by Subject</h3>
-                                    <p>Select a subject to view its lessons</p>
-                                </div>
-                                <div id="subject-selector" class="subject-selector">
-                                    <!-- Subject cards will be populated by JavaScript -->
-                                </div>
-                                <div id="subject-lessons" class="subject-lessons">
-                                    <!-- Lessons for the selected subject will be shown here -->
+
+                                <!-- Right Content Area -->
+                                <div class="lessons-content">
+                                    <!-- Breadcrumb Navigation -->
+                                    <div class="breadcrumb-nav">
+                                        <span class="breadcrumb-item">All Subjects</span>
+                                        <i class="fas fa-chevron-right"></i>
+                                        <span class="breadcrumb-item active">Current Subject</span>
+                                    </div>
+
+                                    <!-- Lesson Header -->
+                                    <div class="lesson-header">
+                                        <h2 class="lesson-title">Select a lesson or create a new one</h2>
+                                        <div class="lesson-actions">
+                                            <button class="btn primary-btn" id="new-lesson-btn">
+                                                <i class="fas fa-plus"></i> New Lesson
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <!-- Lesson Content Area -->
+                                    <div class="lesson-content-area">
+                                        <div class="lesson-form" style="display: none;">
+                                            <div class="form-group">
+                                                <label for="lesson-title">Title</label>
+                                                <input type="text" id="lesson-title" class="form-control" placeholder="Enter lesson title">
+                                            </div>
+                                            
+                                            <div class="form-group">
+                                                <label for="lesson-subject">Subject</label>
+                                                <select id="lesson-subject" class="form-control">
+                                                    <option value="">Select a subject</option>
+                                                </select>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label for="lesson-content">Content</label>
+                                                <div class="rich-text-toolbar">
+                                                    <button type="button" title="Bold"><i class="fas fa-bold"></i></button>
+                                                    <button type="button" title="Italic"><i class="fas fa-italic"></i></button>
+                                                    <button type="button" title="Underline"><i class="fas fa-underline"></i></button>
+                                                    <button type="button" title="Code"><i class="fas fa-code"></i></button>
+                                                    <button type="button" title="Image"><i class="fas fa-image"></i></button>
+                                                    <button type="button" title="Link"><i class="fas fa-link"></i></button>
+                                                </div>
+                                                <textarea id="lesson-content" class="form-control rich-text-editor" placeholder="Enter lesson content"></textarea>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label>Attachments</label>
+                                                <div class="attachments-area">
+                                                    <div class="attachment-upload">
+                                                        <input type="file" id="lesson-attachment" multiple>
+                                                        <label for="lesson-attachment">
+                                                            <i class="fas fa-paperclip"></i>
+                                                            <span>Add files</span>
+                                                        </label>
+                                                    </div>
+                                                    <div class="attachments-list" id="attachments-list">
+                                                        <!-- Attachments will be listed here -->
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-actions">
+                                                <button class="btn secondary-btn" id="cancel-lesson">Cancel</button>
+                                                <button class="btn primary-btn" id="save-lesson">Save Lesson</button>
+                                            </div>
+                                        </div>
+
+                                        <div class="lessons-list" id="lessons-list">
+                                            <!-- Lessons will be populated here -->
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>

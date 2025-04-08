@@ -2383,4 +2383,322 @@ body.dark-theme .lesson-manager-button {
 
 body.dark-theme .lesson-manager-button:hover {
     background-color: var(--primary-dark);
+}
+
+/* Lessons Section Styles */
+.lessons-container {
+    display: flex;
+    gap: 20px;
+    height: 100%;
+    position: relative;
+}
+
+/* Mobile Menu Toggle */
+.mobile-menu-toggle {
+    display: none;
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 1000;
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+/* Sidebar Styles */
+.lessons-sidebar {
+    width: 280px;
+    background: var(--bg-color);
+    border-right: 1px solid var(--border-color);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.3s ease;
+}
+
+.sidebar-header {
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.add-subject-btn {
+    background: none;
+    border: none;
+    color: var(--primary-color);
+    cursor: pointer;
+    padding: 5px;
+    transition: transform 0.2s ease;
+}
+
+.add-subject-btn:hover {
+    transform: scale(1.1);
+}
+
+.subject-search {
+    padding: 15px;
+    position: relative;
+}
+
+.subject-search input {
+    width: 100%;
+    padding: 8px 30px 8px 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    background: var(--input-bg);
+    color: var(--text-color);
+}
+
+.subject-search i {
+    position: absolute;
+    right: 25px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+}
+
+.subjects-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 10px;
+}
+
+.subject-item {
+    padding: 10px;
+    margin: 5px 0;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.subject-item:hover {
+    background: var(--hover-bg);
+}
+
+.subject-item.active {
+    background: var(--primary-color);
+    color: white;
+}
+
+/* Content Area Styles */
+.lessons-content {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.breadcrumb-nav {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+    color: var(--text-muted);
+}
+
+.breadcrumb-item {
+    cursor: pointer;
+}
+
+.breadcrumb-item:hover {
+    color: var(--primary-color);
+}
+
+.breadcrumb-item.active {
+    color: var(--text-color);
+    font-weight: 500;
+}
+
+.lesson-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.lesson-content-area {
+    background: var(--bg-color);
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Form Styles */
+.lesson-form {
+    animation: fadeIn 0.3s ease;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--text-color);
+    font-weight: 500;
+}
+
+.form-control {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    background: var(--input-bg);
+    color: var(--text-color);
+}
+
+.rich-text-toolbar {
+    display: flex;
+    gap: 5px;
+    padding: 10px;
+    background: var(--bg-color);
+    border: 1px solid var(--border-color);
+    border-bottom: none;
+    border-radius: 4px 4px 0 0;
+}
+
+.rich-text-toolbar button {
+    background: none;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    color: var(--text-color);
+    transition: all 0.2s ease;
+}
+
+.rich-text-toolbar button:hover {
+    color: var(--primary-color);
+    background: var(--hover-bg);
+    border-radius: 4px;
+}
+
+.rich-text-editor {
+    min-height: 200px;
+    border-radius: 0 0 4px 4px;
+}
+
+/* Attachments Area */
+.attachments-area {
+    border: 2px dashed var(--border-color);
+    border-radius: 4px;
+    padding: 20px;
+    text-align: center;
+}
+
+.attachment-upload {
+    margin-bottom: 15px;
+}
+
+.attachment-upload input[type="file"] {
+    display: none;
+}
+
+.attachment-upload label {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 20px;
+    background: var(--primary-color);
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.attachment-upload label:hover {
+    background: var(--primary-dark);
+}
+
+.attachments-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+/* Form Actions */
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+/* Lessons List */
+.lessons-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+    padding: 20px 0;
+}
+
+.lesson-card {
+    background: var(--bg-color);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 20px;
+    transition: all 0.3s ease;
+}
+
+.lesson-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideIn {
+    from { transform: translateX(-100%); }
+    to { transform: translateX(0); }
+}
+
+/* Dark Mode Support */
+[data-theme="dark"] .lessons-sidebar {
+    background: var(--dark-bg);
+}
+
+[data-theme="dark"] .lesson-content-area {
+    background: var(--dark-bg);
+}
+
+[data-theme="dark"] .form-control {
+    background: var(--dark-input-bg);
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    .mobile-menu-toggle {
+        display: block;
+    }
+
+    .lessons-sidebar {
+        position: fixed;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        z-index: 999;
+        transform: translateX(-100%);
+    }
+
+    .lessons-sidebar.active {
+        transform: translateX(0);
+    }
+
+    .lessons-content {
+        margin-left: 0;
+    }
+
+    .lessons-list {
+        grid-template-columns: 1fr;
+    }
 } 
