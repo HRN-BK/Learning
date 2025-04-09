@@ -1,95 +1,92 @@
-# Daily Journal & Learning Companion
+# Quiz App
 
-A comprehensive web application for tracking your daily activities, goals, and learning progress. This application uses HTML, CSS, and vanilla JavaScript with localStorage for data persistence.
+A responsive web-based quiz application that presents users with randomized multiple-choice questions. Built with HTML, CSS, and JavaScript.
 
 ## Features
 
-### 1. Daily Journal
-- Write and save daily journal entries
-- Each entry is date-stamped and editable
-- Delete entries if needed
-- Entries are stored locally for persistence
+- Loads questions from a JSON file
+- Randomizes questions and answer options for each quiz attempt
+- Allows selecting different quantities of questions (20, 50, or all)
+- Filters questions by lesson/category
+- Responsive design works on both desktop and mobile devices
+- Real-time progress tracking
+- Visual feedback on correct and incorrect answers
+- Detailed results summary with score breakdown
+- Review of all answers after quiz completion
+- Download results as a text file
 
-### 2. Spaced Repetition System
-- Schedule reviews at intervals of 1, 7, 21, 50, and 120 days
-- Visual reminders on the calendar for when reviews are due
-- Color-coded reminders (yellow for 1 day overdue, red for 2+ days overdue)
-- Automatic rescheduling of missed reviews
+## How to Run the App
 
-### 3. Goal Tracker
-- Set daily goals inspired by the "1% better every day" philosophy
-- Visual progress bar to track daily goal completion
-- Mark tasks as completed and see your progress update in real-time
-- View historical goal completion in the calendar
+### Method 1: Using Node.js (Recommended)
 
-### 4. Lesson Content Management
-- Add, edit, and delete lesson content
-- Lessons are date-stamped and can be linked to the spaced repetition system
-- Easily review lesson content on specific dates
+If you have Node.js installed, you can run the included server:
 
-### 5. Summary Statistics
-- Weekly and monthly summaries of your activity
-- Track spaced repetition progress, goal completion rates, and more
-- Visual representation of your productivity
+1. Open a terminal/command prompt
+2. Navigate to the quiz-app directory
+3. Run the server with: `node server.js`
+4. Open your browser and go to: `http://localhost:3000`
 
-### 6. Interactive Calendar
-- Colorful, interactive calendar where each day is clickable
-- Color-coded indicators for journal entries, goals, lessons, and reviews
-- Easily navigate between days, weeks, and months
-- Highlights for current day, past days, and future days
+### Method 2: Using a Local Server
 
-## How to Use
+You can use any local server like:
+- Visual Studio Code's Live Server extension
+- Python's built-in HTTP server: `python -m http.server`
+- PHP's built-in server: `php -S localhost:8000`
 
-1. **Setup:**
-   - Simply open the `index.html` file in any modern web browser
-   - No server or installation required
-   - Works offline after initial load
+### Method 3: Directly Opening the HTML File
 
-2. **Daily Journal:**
-   - Type your thoughts in the journal textarea
-   - Click "Save Entry" to store your entry
-   - View, edit, or delete past entries
+You can open `index.html` directly in a browser, but some browsers block loading local JSON files for security reasons. If questions don't load:
 
-3. **Goals:**
-   - Add new goals in the "Daily Goals" section
-   - Check off completed goals
-   - Track your progress with the progress bar
+1. Try a different browser (Firefox tends to be more permissive with local files)
+2. Use Method 1 or 2 instead
 
-4. **Lessons:**
-   - Create new lessons with a title and content
-   - Add lessons to the spaced repetition system by clicking the sync icon
-   - Lessons will appear in the calendar on their scheduled review dates
+## Troubleshooting
 
-5. **Calendar Navigation:**
-   - Click on any day to view details for that day
-   - Use the arrow buttons to navigate between months
-   - Color indicators show at a glance what's scheduled for each day
+### Questions Not Loading
 
-6. **Spaced Repetition:**
-   - Review items on their scheduled dates
-   - Mark reviews as complete to reschedule them for the next interval
-   - Reschedule reviews if needed
+If you're experiencing issues with questions not loading:
 
-7. **Summaries:**
-   - Switch between weekly and monthly views
-   - See statistics about your productivity
-   - Automatically updated at the end of each week and month
+1. **Check the console**: Press F12 to open developer tools and look for error messages
+2. **CORS issues**: If you see CORS errors, use the Node.js server method
+3. **File path issues**: Make sure `questions.json` is in the correct location (root directory or in a `data` folder)
+4. **JSON format**: Ensure your questions.json is properly formatted without syntax errors
 
-## Technical Details
+### Common Fixes
 
-- Built with vanilla JavaScript (no frameworks or libraries)
-- Uses localStorage for data persistence
-- Responsive design works on desktop and mobile devices
-- Smooth animations enhance the user experience
+- Make sure you have a valid `questions.json` file in the right location
+- Use the included Node.js server to avoid CORS issues
+- Clear your browser cache (Ctrl+F5 or Cmd+Shift+R)
+- Try a different browser
+
+## Customizing Questions
+
+The quiz questions are stored in the `questions.json` file. You can add, modify, or delete questions by editing this file. Each question should follow this format:
+
+```json
+{
+  "question": "Question text goes here?",
+  "options": {
+    "a": "First option",
+    "b": "Second option",
+    "c": "Third option",
+    "d": "Fourth option"
+  },
+  "answer": "b",
+  "lesson": "Lesson or category name",
+  "explanation": "Optional explanation of the answer"
+}
+```
+
+- `question`: The question text
+- `options`: Object containing options labeled a, b, c, d
+- `answer`: The correct answer key (a, b, c, or d)
+- `lesson`: Optional category or lesson name for filtering
+- `explanation`: Optional explanation of the correct answer
 
 ## Browser Compatibility
 
-Works best in modern browsers:
-- Chrome (latest)
+The app is compatible with all modern browsers:
+- Chrome/Edge (latest)
 - Firefox (latest)
 - Safari (latest)
-- Edge (latest)
-
-## Data Privacy
-
-All your data is stored locally in your browser's localStorage. Nothing is sent to any server, ensuring complete privacy. 
+- Mobile browsers (iOS Safari, Android Chrome) 
