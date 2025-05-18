@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Vocabulary</title>
+</head>
+<body>
+<h1>Vocabulary</h1>
+<form id="vocab-form">
+  <input name="word" placeholder="Word" required />
+  <input name="definition" placeholder="Definition" required />
+  <button type="submit">Add</button>
+</form>
+<ul id="vocab-list"></ul>
+
+<script type="module">
+import { insertVocabulary, fetchVocabulary } from './supabase.js'
+
+const form = document.getElementById('vocab-form')
+const list = document.getElementById('vocab-list')
+
+form.addEventListener('submit', async (e) => {
+  e.preventDefault()
+  const word = form.word.value.trim()
+  const definition = form.definition.value.trim()
+  if (!word || !definition) return
+  const { error } = await insertVocabulary(word, definition)
+  if (error) {
+    alert(error.message)
+  } else {
+    form.reset()
+    load()
+  }
+})
+
+async function load() {
+  const { data, error } = await fetchVocabulary()
+  if (error) {
+    list.innerHTML = '<li>Failed to load vocabulary</li>'
+    return
+  }
+  list.innerHTML = ''
+  data.forEach(item => {
+    const li = document.createElement('li')
+    li.textContent = `${item.word}: ${item.definition}`
+    list.appendChild(li)
+  })
+}
+
+load()
+</script>
+</body>
+</html>
+
