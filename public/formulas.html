@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Formulas</title>
+</head>
+<body>
+<h1>Formulas</h1>
+<form id="formula-form">
+  <input name="formula" placeholder="Formula" required />
+  <input name="description" placeholder="Description" required />
+  <button type="submit">Add</button>
+</form>
+<ul id="formula-list"></ul>
+
+<script type="module">
+import { insertFormula, fetchFormulas } from './supabase.js'
+
+const form = document.getElementById('formula-form')
+const list = document.getElementById('formula-list')
+
+form.addEventListener('submit', async (e) => {
+  e.preventDefault()
+  const formula = form.formula.value.trim()
+  const description = form.description.value.trim()
+  if (!formula || !description) return
+  const { error } = await insertFormula(formula, description)
+  if (error) {
+    alert(error.message)
+  } else {
+    form.reset()
+    load()
+  }
+})
+
+async function load() {
+  const { data, error } = await fetchFormulas()
+  if (error) {
+    list.innerHTML = '<li>Failed to load formulas</li>'
+    return
+  }
+  list.innerHTML = ''
+  data.forEach(item => {
+    const li = document.createElement('li')
+    li.textContent = `${item.formula}: ${item.description}`
+    list.appendChild(li)
+  })
+}
+
+load()
+</script>
+</body>
+</html>
+

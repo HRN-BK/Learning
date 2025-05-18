@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Symbols</title>
+</head>
+<body>
+<h1>Symbols</h1>
+<form id="symbol-form">
+  <input name="symbol" placeholder="Symbol" required />
+  <input name="value" placeholder="Value" required />
+  <button type="submit">Add</button>
+</form>
+<ul id="symbol-list"></ul>
+
+<script type="module">
+import { insertSymbol, fetchSymbols } from './supabase.js'
+
+const form = document.getElementById('symbol-form')
+const list = document.getElementById('symbol-list')
+
+form.addEventListener('submit', async (e) => {
+  e.preventDefault()
+  const symbol = form.symbol.value.trim()
+  const value = form.value.value.trim()
+  if (!symbol || !value) return
+  const { error } = await insertSymbol(symbol, value)
+  if (error) {
+    alert(error.message)
+  } else {
+    form.reset()
+    load()
+  }
+})
+
+async function load() {
+  const { data, error } = await fetchSymbols()
+  if (error) {
+    list.innerHTML = '<li>Failed to load symbols</li>'
+    return
+  }
+  list.innerHTML = ''
+  data.forEach(item => {
+    const li = document.createElement('li')
+    li.textContent = `${item.symbol}: ${item.value}`
+    list.appendChild(li)
+  })
+}
+
+load()
+</script>
+</body>
+</html>
+
